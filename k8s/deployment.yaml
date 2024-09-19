@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: systool-app
+  labels:
+    app: systool-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: systool-app
+  template:
+    metadata:
+      labels:
+        app: systool-app
+    spec:
+      containers:
+      - name: systool-app
+        image: us-east5-docker.pkg.dev/systemstoolchains/systool-app/systool-app:latest
+        ports:
+        - containerPort: 8501
+

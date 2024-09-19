@@ -1,0 +1,61 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'systool-app/systool_app/**'  
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'systool-app/systool_app/**'  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Authenticate to Google Cloud
+      # Using the service account key stored in GitHub Secrets
+      - name: Authenticate to Google Cloud
+        run: |
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/gcloud-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+          gcloud config set project SystemsToolchains
+          gcloud auth configure-docker us-east5-docker.pkg.dev/systemstoolchains/systool-app
+      - name: Build Docker image
+        run: |
+          docker build -t us-east5-docker.pkg.dev/systemstoolchains/systool-app/systool-app:latest ./systool-app/systool_app
+        
+      - name: Push Docker image
+        run: |
+          docker push us-east5-docker.pkg.dev/systemstoolchains/systool-app/systool-app:latest
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository (to get Kubernetes manifests)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Authenticate to Google Cloud (for GKE access)
+      - name: Authenticate to Google Cloud
+        run: |
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/gcloud-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+          gcloud config set project YOUR_PROJECT_ID
+          gcloud container clusters get-credentials my-gke-cluster --region us-central1
+
+      # Step 3: Deploy the Docker image to GKE using kubectl
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f ./k8s/deployment.yaml
