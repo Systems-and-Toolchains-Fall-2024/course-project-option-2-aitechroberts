@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "systool-app"
+version = "0.1.0"
+description = ""
+authors = ["aitechroberts <jrobert2@andrew.cmu.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.38.0"
+pyspark = "^3.5.2"
+kaggle = "^1.6.17"
+google-cloud-storage = "^2.18.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
