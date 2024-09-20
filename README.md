@@ -26,6 +26,13 @@
 - [ ] Create Cloud Storage resource
 - [ ] Connect Streamlit to GCS
 
+#### Google-Dataproc-Cluster
+- [ ] Properly initialize Dataproc cluster
+    - Best initialization info can be found [here](https://github.com/GoogleCloudDataproc/initialization-actions/tree/master/cloud-sql-proxy)
+    - If you don't use that, you need the jar files for the following dependencies all stored in the dataproc staging bucket: socket-factory-core, postgres-socket-factory, google oauth2 library http, google oauth2 credentials, google http client, and cloud sql connector jdbc sqlserver all 
+- [ ] Connect Streamlit to GCS
+
+
 #### Google-Kubernetes-Engine
 - [x] Create Google Artifact Registry and Repo
 - [ ] Create GKE Cluster
