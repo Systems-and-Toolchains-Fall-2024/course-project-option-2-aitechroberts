@@ -104,22 +104,32 @@ def process_kaggle_to_gcs_with_spark(kaggle_dataset: str, gcs_bucket: str, gcs_b
 # Streamlit interface
 def main():
     st.title("Kaggle Dataset to Google Cloud Storage with PySpark")
+
+    # Input fields for Kaggle dataset and GCS paths
+    kaggle_dataset = st.text_input("Enter Kaggle Dataset (e.g., zillow/zecon):")
+    gcs_bucket = st.text_input("Enter GCS Bucket Name:")
+    gcs_blob = st.text_input("Enter GCS Blob Path:")
     
     if st.button("Download Dataset and Upload to GCS"):
         if kaggle_dataset and gcs_bucket and gcs_blob:
             try:
-                # Trigger Dataproc job to download and upload the dataset
-                submit_pyspark_job(
+                st.write("Submitting PySpark job to Dataproc...")
+                response = submit_pyspark_job(
                     cluster_name="my-cluster",
                     project_id="your-project-id",
                     region="us-central1",
-                    gcs_bucket="your-gcs-bucket",
-                    input_path="gs://your-bucket/input-file",
-                    output_path="gs://your-bucket/output-folder"
+                    gcs_bucket=gcs_bucket,
+                    input_path=f"gs://{gcs_bucket}/input-file",
+                    output_path=f"gs://{gcs_bucket}/output-folder"
                 )
                 st.success("Dataproc job submitted successfully.")
+                st.write(f"Job ID: {response.job_uuid}")
+
+                # You can extend here to monitor the job status
+                job_status = "PENDING"  # Example: Set to track job status
+                st.write(f"Current job status: {job_status}")
+
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
-
-if __name__ == "__main__":
-    main()
+        else:
+            st.warning("Please fill in all fields before proceeding.")
