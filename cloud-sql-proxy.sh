@@ -24,7 +24,12 @@ readonly POSTGRES_PORT='5432'
 readonly POSTGRES_ADMIN_USER='postgres'
 readonly POSTGRES_DRIVER='org.postgresql.Driver'
 readonly POSTGRES_PROTO='postgresql'
+readonly JARS_DIR='/usr/lib/spark/jars'
 
+# Download required JARs
+gsutil cp gs://dataproc-staging-us-central1-353241962082-fj6qfu9g/postgresql-42.3.1.jar $JARS_DIR
+gsutil cp gs://dataproc-staging-us-central1-353241962082-fj6qfu9g/jdbc-socket-factory-core-1.20.1.jar $JARS_DIR
+gsutil cp gs://dataproc-staging-us-central1-353241962082-fj6qfu9g/google-auth-library-oauth2-http-1.24.1.jar $JARS_DIR
 function err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')] [$(hostname)]: ERROR: $*" >&2
   return 1

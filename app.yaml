@@ -1,0 +1,13 @@
+runtime: python310
+
+handlers:
+- url: /.*
+  script: auto
+  secure: always
+  login: required
+
+env_variables:
+  CLOUD_SQL_CONNECTION_NAME: "systool-436201:us-east1:projectdb"
+  DB_USER: "postgres"
+  DB_PASS: "postgres_pw"
+  DB_NAME: "mqttdb"
