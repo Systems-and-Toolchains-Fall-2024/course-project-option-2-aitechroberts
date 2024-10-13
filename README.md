@@ -260,6 +260,15 @@ for flag in flags:
 
 4. Show a histogram for the target values in the training, testing or combined
 dataset.
-- [] Your code should accept an argument that defines if the histogram is
+- [x] Your code should accept an argument that defines if the histogram is
 shown for the training, testing or combined.
-- [] display all three histograms.
+- [x] Display all three histograms in README
+
+Test Data:
+![alt text](images/test.png)
+
+Train Data:
+![alt text](images/train.png)
+
+Combined Data:
+![alt text](images/combined.png)
