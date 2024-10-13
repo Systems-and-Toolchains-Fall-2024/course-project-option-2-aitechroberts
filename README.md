@@ -131,6 +131,7 @@ These features are directly associated with the MQTT protocol and provide insigh
 23. **`mqtt.len`**  
     Remaining length field indicating the number of bytes remaining within the current MQTT packet.
     - Gotta be worthless
+
 24. **`mqtt.sub.qos`** 
     Requested QoS level in a SUBSCRIBE message.
 
@@ -194,20 +195,68 @@ Develop functions that run on Spark to answer the following questions, and inges
 
 1. What is the average length of an MQTT message captured in the training (or
 testing) dataset for a given target X?
-- [] X is a variable that represents potential value from the target column (e.g.,
+- [x] X is a variable that represents potential value from the target column (e.g.,
 legitimate, dos, etc.)
-- [] Use an input parameter (function argument) to identify whether the analysis is conducted on the training dataset or the testing dataset.
+- [x] Use an input parameter (function argument) to identify whether the analysis is conducted on the training dataset or the testing dataset.
+
+Below is the python function followed by output
+```python
+def get_average_len(df, set='test', target=None)
+
+print(f"Average MQTT message length is: {get_average_len(mqtt_df, target='dos'):.2f}")
+```
+- Output:
+[Stage 28:>                                                         (0 + 1) / 1]
+Average MQTT message length is: 85.53
 
 2. For each target value, 
+Below is the python function followed by output
+```python
+def get_average_len(df, set='test', target=None)
+
+ans = get_all_avg_tcp_len(mqtt_df)
+keys = ans.keys()
+for key in keys:
+    print(f"Average TCP message length for target value {key} is: {ans[key][0]:.2f} \n and the most popular header value for {key} is: {ans[key][1]}")
+```
+- Output: Printed, function returns dictionary of tuples
+
 1) what is the average length of TCP messages and 
+- Average TCP message length for target value **slowite is: 1.34** 
+- Average TCP message length for target value **bruteforce is: 1.51 **
+- Average TCP message length for target value **flood is: 4.82 **
+- Average TCP message length for target value **malformed is: 1.79** 
+- Average TCP message length for target value **dos is: 2.42 **
+- Average TCP message length for target value **legitimate is: 1.97 **
+
 2) what is the most popular header flags’ code (mqtt.hdrflags)?
-- [] Conduct this process programmatically and don’t hardcode any of the target values in your command
+ - and the most popular header value for **slowite is: 0**
+ - and the most popular header value for **bruteforce is: 0x00000010**
+ - and the most popular header value for **flood is: 0x00000030**
+ - and the most popular header value for **malformed is: 0x00000030**
+ - and the most popular header value for **dos is: 0x00000040**
+ - and the most popular header value for **legitimate is: 0x00000030**
+
+- [x] Conduct this process programmatically and don’t hardcode any of the target values in your command
 
 3. What is the most frequent X TCP flags for traffic with TCP time delta that is smaller than or equal to Y.
-- [] X represents a positive integer. Handle scenarios where a user may send
+- [X] X represents a positive integer. Handle scenarios where a user may send
 negative values to your function.
-- [] Y represents a float value between 0.0 and 5.0.
-- [] Make sure to handle this scenario as well: if the user requests 5 most frequent TCP flags but there are 3 Flags that share the same count at rank number 5, please include all of them in your output.
+- [X] Y represents a float value between 0.0 and 5.0.
+- [X] Make sure to handle this scenario as well: if the user requests 5 most frequent TCP flags but there are 3 Flags that share the same count at rank number 5, please include all of them in your output.
+- Output: Printed, function returns dictionary of tuples
+```python
+def get_most_frequent_flags(df, X: int, Y: float):
+    if 0 >= X:
+        raise ValueError("X must be a positive integer.")
+    if not (5.0 >= Y >= 0.0):
+        raise ValueError("Y must be a float between 0.0 and 5.0.")
+    
+flags = get_most_frequent_flags(mqtt_df, X=4, Y=.003)
+print('The most frequenXt flags for tcp_time_delta < Y are:')
+for flag in flags:
+    print(f'{flag}') 
+```
 
 4. Show a histogram for the target values in the training, testing or combined
 dataset.
