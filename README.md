@@ -4,6 +4,7 @@ This will walk you through the required tasks and subtasks to complet the Course
 # Task 1
 - [x] Ingest both train and test data into one Postgres Database table. As per the class announcement, I am using the train70 and test30 data in Final CSV folder.
     - This is accomplished in cells 1, 2, and 3 and separated that way for modularity
+    - Link to Google Drive [data folder](https://drive.google.com/drive/u/0/folders/1mqoPMrIW_rw10Fg_si67ebqfjUIsjLCa)
 - [x] Add a field to your database table that distinguishes between train and test
 datasets.
     - This is accomplished in cell 3
