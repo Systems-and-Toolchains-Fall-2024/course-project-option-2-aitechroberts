@@ -381,3 +381,53 @@ Label Index to Original Target Mapping:
 - 5.0: slowite     46% correct, 54% falsely legitimate (false negative), <1% wrongly labeled
 
 
+### Torch Multinomial Linear Regression:
+Best Model Parameters: lr=0.1, num_epochs=3  
+- *In the interest of time, these parameters were not run in true 'grid' format, and thus only 3 HP combinations were used.
+Best Test Accuracy: 0.6725
+                                                                                
+Confusion Matrix:
+
+Predicted      0.0     1.0     2.0     3.0     4.0     5.0
+
+Actual    
+- 0.0        3000000       0       0       0       0       0
+- 1.0         225759  254753       0       0     172  119316
+- 2.0         169298     127  430275       0      75     225
+- 3.0         357600       0       0  237600    1200    3600
+- 4.0         214260   49500    4440       0  187680  144120
+- 5.0         323175     525       0       0      75  276225
+
+Label Index to Original Target Mapping:
+- 0.0: legitimate
+- 1.0: bruteforce  42% correct, 38% falsely legitimate (false negative), 20% wrongly labeled
+- 2.0: dos         72% correct, 28% falsely legitimate (false negative), <1% wrongly labeled
+- 3.0: flood       40% correct, 60% falsely legitimate (false negative), <1% wrongly labeled
+- 4.0: malformed   31% correct, 36% falsely legitimate (false negative), 33% wrongly labeled
+- 5.0: slowite     46% correct, 54% falsely legitimate (false negative), <1% wrongly labeled
+
+
+### Torch Multinomial Naive Bayes:
+Best Model Parameters: smoothing=1.0
+
+Best Test Accuracy: 0.7245        
+
+Confusion Matrix:
+
+Predicted      0.0     1.0     2.0     3.0     4.0     5.0
+
+Actual    
+- 0.0        3000000       0       0       0       0       0
+- 1.0         225759  254925       0       0       0  119316
+- 2.0         169298     202  430275       0       0     225
+- 3.0         336000    1200       0  259200       0    3600
+- 4.0         214260   83400    2160       0  153840  146340
+- 5.0         323175     525       0       0      75  276225
+
+Label Index to Original Target Mapping:
+- 0.0: legitimate
+- 1.0: bruteforce  42% correct, 38% falsely legitimate (false negative), 20% wrongly labeled
+- 2.0: dos         72% correct, 28% falsely legitimate (false negative), <1% wrongly labeled
+- 3.0: flood       43% correct, 56% falsely legitimate (false negative), <1% wrongly labeled
+- 4.0: malformed   25% correct, 36% falsely legitimate (false negative), 39% wrongly labeled
+- 5.0: slowite     46% correct, 54% falsely legitimate (false negative), <1% wrongly labeled
