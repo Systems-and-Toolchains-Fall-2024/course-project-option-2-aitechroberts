@@ -275,6 +275,53 @@ Combined Data:
 ![alt text](images/combined.png)
 
 
+
+# Bonus CloudSQL
+To get the SparkSession inside the Jupyter Notebook connected to the PostgreSQL instance hosted on Google Cloud's CloudSQL managed database service, you really only need an updated postgresql JAR file that connects Spark to postgres through a JDBC connector. The latest JAR for the PostgreSQL 15 that I used on CloudSQL is the postgres-42.7.4.jar that you see below. Additionally, after the python codeblock, you will see the bash code block. This contains the code that you can copy and paste into your Linux terminal to get the cloud_sql_proxy executable and run that executable to provide a connection that you can point your Spark to through your machine's localhost. **Note: be sure to point to your Google Cloud Project's specific instance rather than mine** As you will see back in the Python code block, I have pointed the SparkSession to jdbc:postgresql://127.0.0.1:5432/postgres' in the JDBC_URL variable. And that's it, it's really not difficult despite days and days of fighting to find this solution.
+
+```py
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import lit 
+
+
+# Define dataset, spark constants
+APPNAME = 'Roberts_Systool_Project'
+MASTER = 'yarn'
+JDBC_JAR_PATHS = [
+    "home/jroberts1187/course-project-option-2-aitechroberts/postgresql-42.7.4.jar",
+]
+
+# JDBC_URL = 'jdbc:postgresql://104.196.99.150:5432/projectdb' CloudSQL URL
+'''
+Point all nodes (master and workers) to local host to run through each of their own CloudSQL Proxies
+'''
+JDBC_URL = 'jdbc:postgresql://127.0.0.1:5432/postgres'
+DB_PROPERTIES = {
+    "user": "postgres",
+    "password": "postgres_pw",
+    "driver": "org.postgresql.Driver",
+    "batchsize": "10000" # trying to optimize the write and seems to have cut the time in half
+}
+
+# Initialize Spark session with PostgreSQL JDBC driver
+spark = SparkSession.builder \
+    .appName(APPNAME) \
+    .master(MASTER) \
+    .config('spark.jars',JDBC_JAR_PATHS[0]) \
+    .config("spark.executor.memory", "8g") \
+    .config("spark.driver.memory", "8g") \
+    .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
+    .config("spark.kryoserializer.buffer.max", "512m") \
+    .getOrCreate()
+```
+
+```bash
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+chmod +x cloud_sql_proxy
+./cloud_sql_proxy -instances=systool-436201:us-east1:projectdb=tcp:5432 &
+```
+
 # Task 3: Machine Learning Modeling
 As the MQTT Dataset, even after the elimination based on unique value count, elimination of redundant data from the data descriptions, and correlation considerations (none dropped here actually), and eliminating the mqtt_msg column because my 8 core 32gb environment kept crashing was still (20,000,000, 12), I knew that I need some of the most computationally inexpensive models. Therefore, I chose 2 models with a linear scaling big O notation of O(N * D * T) where N is the number of observations, D is the number of features, and T is the number of iterations. The iterations is important because that's one of the most normal "go-to" hyperparameters to tune. With that in mind, I chose Multinomial Logistic Regression and Multinomial Naive Bayes.
 
