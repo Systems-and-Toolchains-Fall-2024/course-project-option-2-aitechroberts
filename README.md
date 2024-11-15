@@ -273,3 +273,64 @@ Train Data:
 
 Combined Data:
 ![alt text](images/combined.png)
+
+
+# Task 3: Machine Learning Modeling
+As the MQTT Dataset, even after the elimination based on unique value count, elimination of redundant data from the data descriptions, and correlation considerations (none dropped here actually), and eliminating the mqtt_msg column because my 8 core 32gb environment kept crashing was still (20,000,000, 12), I knew that I need some of the most computationally inexpensive models. Therefore, I chose 2 models with a linear scaling big O notation of O(N * D * T) where N is the number of observations, D is the number of features, and T is the number of iterations. The iterations is important because that's one of the most normal "go-to" hyperparameters to tune. With that in mind, I chose Multinomial Logistic Regression and Multinomial Naive Bayes.
+
+For the LR hyperparameters, I chose the regularization parameter and the number of iterations as these are generally the first hyperparameters usually chosen to tune a model. In logistic regression, coefficients represent the influence of each feature on the prediction. Large coefficients indicate strong influence, while smaller coefficients suggest a weaker influence. So tuning the regularization parameter penalizes large coefficients making the model less sensitive to individual features which serves to prevent over- or underfitting. And tuning the number of iterations on which the model can learn increases the odds that it improves.
+
+For the NB hyperparameter, I chose the smoothing parameter. Without smoothing, if a given feature's probability is ever zero, it will basically eliminate the probability calculation for that feature, making predictions unreliable. Smoothing mitigates this by adding a small constant to the counts of features to guarantee that no feature has a zero probability. The smoothing parameter controls the size of this constant. A larger smoothing value distributes probability more evenly across all features and reducing the influence of a single feature. While a smaller smoothing values allows stronger comparzitve feature influence making it more sensitive to the training data. Smoothing also helps the model generalize beyond training data.
+
+### SparkML Multinomial Linear Regression:
+Best Model Parameters: regParam=0.1, maxIter=5  
+- *In the interest of time, these parameters were not run in true 'grid' format, and thus only 3 HP combinations were used.
+Best Test Accuracy: 0.7311
+                                                                                
+Confusion Matrix:
+
+Predicted      0.0     1.0     2.0     3.0     4.0     5.0
+
+Actual    
+- 0.0        3000000       0       0       0       0       0
+- 1.0         225759  254753       0       0     172  119316
+- 2.0         169298     127  430275       0      75     225
+- 3.0         357600       0       0  237600    1200    3600
+- 4.0         214260   49500    4440       0  187680  144120
+- 5.0         323175     525       0       0      75  276225
+
+Label Index to Original Target Mapping:
+- 0.0: legitimate
+- 1.0: bruteforce  42% correct, 38% falsely legitimate (false negative), 20% wrongly labeled
+- 2.0: dos         72% correct, 28% falsely legitimate (false negative), <1% wrongly labeled
+- 3.0: flood       40% correct, 60% falsely legitimate (false negative), <1% wrongly labeled
+- 4.0: malformed   31% correct, 36% falsely legitimate (false negative), 33% wrongly labeled
+- 5.0: slowite     46% correct, 54% falsely legitimate (false negative), <1% wrongly labeled
+
+
+### SparkML Multinomial Naive Bayes:
+Best Model Parameters: smoothing=1.0
+
+Best Test Accuracy: 0.7291        
+
+Confusion Matrix:
+
+Predicted      0.0     1.0     2.0     3.0     4.0     5.0
+
+Actual    
+- 0.0        3000000       0       0       0       0       0
+- 1.0         225759  254925       0       0       0  119316
+- 2.0         169298     202  430275       0       0     225
+- 3.0         336000    1200       0  259200       0    3600
+- 4.0         214260   83400    2160       0  153840  146340
+- 5.0         323175     525       0       0      75  276225
+
+Label Index to Original Target Mapping:
+- 0.0: legitimate
+- 1.0: bruteforce  42% correct, 38% falsely legitimate (false negative), 20% wrongly labeled
+- 2.0: dos         72% correct, 28% falsely legitimate (false negative), <1% wrongly labeled
+- 3.0: flood       43% correct, 56% falsely legitimate (false negative), <1% wrongly labeled
+- 4.0: malformed   25% correct, 36% falsely legitimate (false negative), 39% wrongly labeled
+- 5.0: slowite     46% correct, 54% falsely legitimate (false negative), <1% wrongly labeled
+
+
